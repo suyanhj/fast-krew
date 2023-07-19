@@ -22,6 +22,7 @@ download_use_axel()
     BASE_NAME=$(basename "$URL")
     echo "axel -n $NUM_CONN -o $TARGET $URL"
     axel -n "$NUM_CONN" -o "$TARGET" "$URL"
+    [ $? != 0 ] && echo "Download failed, please try again later: $URL" && exit 144
 }
 
 install_plugin()
@@ -39,7 +40,8 @@ main()
         NUM_CONN=$1
         shift
     else
-        NUM_CONN=100
+    	CPUS=`grep processor /proc/cpuinfo |wc -l`
+     	NUM_CONN=`awk -v CPUS=$CPUS 'BEGIN{result = CPUS*2+1; print result}'`
     fi
     NAME=$1
     if [[ -z $NAME ]]; then
