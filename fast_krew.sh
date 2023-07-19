@@ -1,5 +1,6 @@
 #!/bin/bash
 
+#获取krew配置中插件路径
 get_index_path()
 {
     INDEX_BASE=$(kubectl krew version | awk '/IndexPath/{print $2}')
@@ -7,6 +8,7 @@ get_index_path()
     echo "$INDEX_PATH"
 }
 
+#获取插件下载url
 get_plugin_url()
 {
     NAME=$1
@@ -14,6 +16,7 @@ get_plugin_url()
     echo "$URL"
 }
 
+#下载插件
 download_use_axel()
 {
     NUM_CONN=$1
@@ -21,10 +24,11 @@ download_use_axel()
     TARGET=$3
     BASE_NAME=$(basename "$URL")
     echo "axel -n $NUM_CONN -o $TARGET $URL"
-    axel -n "$NUM_CONN" -o "$TARGET" "$URL"
+    axel -T 30 -n "$NUM_CONN" -o "$TARGET" "$URL"
     [ $? != 0 ] && echo "Download failed, please try again later: $URL" && exit 144
 }
 
+#安装插件
 install_plugin()
 {
     INDEX_FILE=$1
